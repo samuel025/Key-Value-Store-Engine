@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 public class Page {
     private int pageId;
     private final byte[] data;
-    // We use ByteBuffer to easily read/write primitives to the byte array
     private final ByteBuffer buffer; 
     
     // "Dirty" means the data in memory has been modified and no longer matches 
@@ -23,7 +22,27 @@ public class Page {
         this.isDirty = false;
     }
 
-    // TODO: Write getters and setters for pageId and isDirty.
-    // TODO: Write a getter for the `data` array so the DiskManager can read/write it.
-    // TODO: Write a getter for the `buffer` so the B-Tree can read/write ints and doubles.
+    public int getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(int pageId) {
+        this.pageId = pageId;
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void setDirty(boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public ByteBuffer getBuffer() {
+        return buffer;
+    }
 }
