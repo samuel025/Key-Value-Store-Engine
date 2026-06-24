@@ -1,7 +1,6 @@
 package com.learning.btree.buffer;
 
 import com.learning.btree.storage.DiskManager;
-import com.learning.btree.buffer.Page;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,7 +12,6 @@ public class BufferPoolManager {
     private final DiskManager diskManager;
     private final int capacity;
     
-    // We use a LinkedHashMap to easily implement an LRU (Least Recently Used) Cache!
     private final Map<Integer, Page> pageTable;
 
     public BufferPoolManager(DiskManager diskManager, final int capacity) {

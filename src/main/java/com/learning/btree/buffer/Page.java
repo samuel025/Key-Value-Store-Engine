@@ -11,8 +11,6 @@ public class Page {
     private final byte[] data;
     private final ByteBuffer buffer; 
     
-    // "Dirty" means the data in memory has been modified and no longer matches 
-    // what is safely stored on the disk. It MUST be written to disk before being evicted!
     private boolean isDirty;
     
     public Page(int pageId) {
