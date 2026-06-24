@@ -36,15 +36,11 @@ class BTreeMassiveInsertTest {
     void testMassiveInsertAndSplit() throws IOException {
         BTree tree = new BTree(bufferPool, -1);
 
-        // Insert 10,000 keys!
-        // Since a leaf node holds a maximum of 510 keys, this will force DOZENS of leaf splits,
-        // and several internal node splits!
         System.out.println("Inserting 10,000 records into the database...");
         for (int i = 0; i < 10000; i++) {
             tree.insert(i, i * 10);
         }
 
-        // Now let's ask the database to find some of them!
         System.out.println("Searching for records across the B-Tree...");
         assertEquals(50000, tree.search(5000), "Key 5000 should return 50000");
         assertEquals(99990, tree.search(9999), "Key 9999 should return 99990");

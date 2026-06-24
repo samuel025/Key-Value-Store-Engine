@@ -72,7 +72,7 @@ public class BufferPoolManager {
     }
     
     /**
-     * Flushes all dirty pages to disk (useful when shutting down the database).
+     * Flushes all dirty pages to disk.
      */
     public void flushAllPages() throws IOException {
         for (Page page : pageTable.values()) {
