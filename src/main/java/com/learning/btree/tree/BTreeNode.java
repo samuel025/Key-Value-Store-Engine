@@ -165,4 +165,63 @@ public class BTreeNode {
         // 5. Return the smallest key of the new sibling. 
         return newRightSibling.keys[0];
     }
+
+
+    /**
+     * Splits a full Internal Node in half.
+     * Returns the "Middle Key" that needs to be pushed up to the parent.
+     */
+    public int splitInternal(BTreeNode newRightSibling) {
+        if (isLeaf || newRightSibling.isLeaf) throw new IllegalStateException("Both nodes must be internal!");
+        if (numKeys < MAX_KEYS) throw new IllegalStateException("Node is not full!");
+
+        int mid = numKeys / 2; 
+        int keysToMove = numKeys - mid - 1; 
+        int middleKey = this.keys[mid];
+
+        for (int i = 0; i < keysToMove; i++) {
+            newRightSibling.keys[i] = this.keys[mid + 1 + i];
+            newRightSibling.children[i] = this.children[mid + 1 + i];
+        }
+
+        newRightSibling.children[keysToMove] = this.children[numKeys];
+
+        newRightSibling.numKeys = keysToMove;
+        this.numKeys = mid; 
+
+        this.writeToPage();
+        newRightSibling.writeToPage();
+
+        return middleKey;
+    }
+
+    /**
+     * Inserts a routing key and child pointer into an INTERNAL node in sorted order.
+     */
+    public void insertIntoInternal(int key, int childPageId) {
+        if (isLeaf) throw new IllegalStateException("Must be an internal node!");
+        if (numKeys >= MAX_KEYS) throw new IllegalStateException("Node is full!");
+
+        int i = numKeys - 1;
+        
+        while (i >= 0 && keys[i] > key) {
+            keys[i + 1] = keys[i];
+            children[i + 2] = children[i + 1]; 
+            i--;
+        }
+
+        keys[i + 1] = key;
+        children[i + 2] = childPageId;
+        numKeys++;
+
+        writeToPage();
+        writeToPage();
+    }
+    
+    public void setChild(int index, int childPageId) {
+        children[index] = childPageId;
+        writeToPage();
+    }
+    
+    public int getPageId() { return page.getPageId(); }
 }
