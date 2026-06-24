@@ -108,13 +108,61 @@ public class BTreeNode {
     public int getKey(int index) { return keys[index]; }
     public int getValue(int index) { return values[index]; }
     public int getChild(int index) { return children[index]; }
-
-    // Helper for testing until we implement the full B-Tree Insert Algorithm
-    public void insertTemp(int key, int value) {
-        if (!isLeaf) throw new IllegalStateException("Can only insert values into leaves!");
-        keys[numKeys] = key;
-        values[numKeys] = value;
+    /**
+     * Inserts a key/value pair into a LEAF node in sorted order.
+     */
+    public void insertIntoLeaf(int key, int value) {
+        if (!isLeaf) throw new IllegalStateException("Must be a leaf node!");
+        if (numKeys >= MAX_KEYS) throw new IllegalStateException("Node is full!");
+        
+        int i = numKeys - 1;
+        
+        while (i >= 0 && keys[i] > key) {
+            keys[i + 1] = keys[i];
+            values[i + 1] = values[i];
+            i--;
+        }
+        
+        keys[i + 1] = key;
+        values[i + 1] = value;
         numKeys++;
-        writeToPage(); // Pack it back into the buffer
+        
+        writeToPage(); 
+    }
+    /**
+     * Splits a full Leaf Node in half. 
+     * Returns the "Middle Key" that needs to be pushed up to the parent.
+     */
+    public int splitLeaf(BTreeNode newRightSibling) {
+        if (!isLeaf || !newRightSibling.isLeaf) {
+            throw new IllegalStateException("Both nodes must be leaves!");
+        }
+        if (numKeys < MAX_KEYS) {
+            throw new IllegalStateException("Node is not full!");
+        }
+
+        int mid = numKeys / 2; 
+        int keysToMove = numKeys - mid;
+
+        // 1. Move the right half of the data over to the new sibling
+        for (int i = 0; i < keysToMove; i++) {
+            newRightSibling.keys[i] = this.keys[mid + i];
+            newRightSibling.values[i] = this.values[mid + i];
+        }
+
+        // 2. Update the number of keys in both nodes
+        newRightSibling.numKeys = keysToMove;
+        this.numKeys = mid;
+
+        // 3. Fix the linked list pointers so scanning still works!
+        newRightSibling.nextLeafPageId = this.nextLeafPageId;
+        this.nextLeafPageId = newRightSibling.page.getPageId();
+
+        // 4. Save both nodes to the buffer pool
+        this.writeToPage();
+        newRightSibling.writeToPage();
+
+        // 5. Return the smallest key of the new sibling. 
+        return newRightSibling.keys[0];
     }
 }

@@ -44,15 +44,12 @@ class BTreeTest {
         Page rootPage = bufferPool.fetchPage(rootPageId);
         BTreeNode rootNode = new BTreeNode(rootPage);
         
-        // Manually insert data
-        rootNode.insertTemp(42, 99);
-        rootNode.insertTemp(100, 500);
+   
 
         // 3. Search the tree!
         Integer result1 = tree.search(42);
         Integer result2 = tree.search(100);
-        Integer result3 = tree.search(999); // Doesn't exist
-
+        Integer result3 = tree.search(999); 
         // 4. Assert the results
         assertEquals(99, result1, "Search for 42 should return 99");
         assertEquals(500, result2, "Search for 100 should return 500");
