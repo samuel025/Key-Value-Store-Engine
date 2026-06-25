@@ -48,7 +48,6 @@ public class DiskManager {
 
     /**
      * Allocates a new empty page at the end of the file.
-     * @return The newly assigned pageId.
      */
     public int allocatePage() {
         int newPageId = nextPageId;

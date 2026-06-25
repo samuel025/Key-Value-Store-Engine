@@ -29,15 +29,13 @@ public class BTree {
     }
 
     /**
-     * Searches the tree for a key. Returns the value if found, or null if not found.
+     * Searches the tree for a key. 
      */
     public Integer search(int key) throws IOException {
-        // 1. Start at the root page
         int currentPageId = rootPageId;
         Page page = bufferPool.fetchPage(currentPageId);
         BTreeNode node = new BTreeNode(page);
 
-        // 2. Traverse down the tree until we hit a Leaf Node
         while (!node.isLeaf()) {
             int i = 0;
             while (i < node.getNumKeys() && key >= node.getKey(i)) {
@@ -49,7 +47,6 @@ public class BTree {
             node = new BTreeNode(page);
         }
 
-        // 3. We are now at a Leaf Node! Scan its keys for an exact match.
         for (int i = 0; i < node.getNumKeys(); i++) {
             if (node.getKey(i) == key) {
                 return node.getValue(i); 

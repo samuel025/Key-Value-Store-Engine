@@ -22,7 +22,7 @@ class BTreeMassiveInsertTest {
     void setUp() throws IOException {
         Files.deleteIfExists(new File(TEST_DB_FILE).toPath());
         diskManager = new DiskManager(TEST_DB_FILE);
-        bufferPool = new BufferPoolManager(diskManager, 50); // Give it some more RAM!
+        bufferPool = new BufferPoolManager(diskManager, 50);
     }
 
     @AfterEach

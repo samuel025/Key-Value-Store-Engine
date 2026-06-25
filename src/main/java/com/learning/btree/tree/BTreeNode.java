@@ -5,19 +5,16 @@ import java.nio.ByteBuffer;
 
 /**
  * Represents a single Node in our B-Tree.
- * This class acts as a wrapper around the `Page` object, translating raw bytes into arrays.
  */
 public class BTreeNode {
     public static final int MAX_KEYS = 510;
     
     private final Page page;
     
-    // Header
     private boolean isLeaf;
     private int numKeys;
     private int nextLeafPageId; 
     
-    // Data arrays
     private final int[] keys = new int[MAX_KEYS];
     private final int[] values = new int[MAX_KEYS]; 
     private final int[] children = new int[MAX_KEYS + 1];
@@ -131,7 +128,6 @@ public class BTreeNode {
     }
     /**
      * Splits a full Leaf Node in half. 
-     * Returns the "Middle Key" that needs to be pushed up to the parent.
      */
     public int splitLeaf(BTreeNode newRightSibling) {
         if (!isLeaf || !newRightSibling.isLeaf) {
@@ -144,25 +140,20 @@ public class BTreeNode {
         int mid = numKeys / 2; 
         int keysToMove = numKeys - mid;
 
-        // 1. Move the right half of the data over to the new sibling
         for (int i = 0; i < keysToMove; i++) {
             newRightSibling.keys[i] = this.keys[mid + i];
             newRightSibling.values[i] = this.values[mid + i];
         }
 
-        // 2. Update the number of keys in both nodes
         newRightSibling.numKeys = keysToMove;
         this.numKeys = mid;
 
-        // 3. Fix the linked list pointers so scanning still works!
         newRightSibling.nextLeafPageId = this.nextLeafPageId;
         this.nextLeafPageId = newRightSibling.page.getPageId();
 
-        // 4. Save both nodes to the buffer pool
         this.writeToPage();
         newRightSibling.writeToPage();
 
-        // 5. Return the smallest key of the new sibling. 
         return newRightSibling.keys[0];
     }
 
